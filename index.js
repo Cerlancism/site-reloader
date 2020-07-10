@@ -5,14 +5,14 @@ frame.height = window.innerHeight
 
 const query = new URLSearchParams(location.search)
 
-if (!query.has("url"))
-{
-    query.set("url", "https://www.example.com")
-}
-
 if (isNaN(Number(query.get("interval"))) || Number(query.get("interval") < 1000))
 {
     query.set("interval", "10000")
+}
+
+if (!query.has("url"))
+{
+    query.set("url", "https://www.example.com")
 }
 
 window.history.replaceState(null, null, "?" + decodeURIComponent(query.toString()));
