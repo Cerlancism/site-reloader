@@ -1,5 +1,7 @@
 const frame = /** @type {HTMLIFrameElement} */ (document.querySelector("#content"));
 
+let hasRng = false
+
 frame.width = window.innerWidth
 frame.height = window.innerHeight
 
@@ -13,6 +15,11 @@ if (isNaN(Number(query.get("interval"))) || Number(query.get("interval") < 1000)
 if (!query.has("url"))
 {
     query.set("url", "https://www.example.com")
+}
+
+if (query.has("rng"))
+{
+    hasRng = true
 }
 
 window.history.replaceState(null, null, "?" + decodeURIComponent(query.toString()));
@@ -40,14 +47,14 @@ function getRandomInt(min, max)
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
-frame.src = src
+frame.src = hasRng ? getURLWithRng(src) : src
 
 let countdown = interval
 let nextInterval = interval
 
 setInterval(() =>
 {
-    frame.src = src
+    frame.src = hasRng ? getURLWithRng(src) : src
 
     nextInterval = getRandomInterval()
     countdown = nextInterval
@@ -56,6 +63,18 @@ setInterval(() =>
 let previousTime = performance.now()
 
 const counter = document.querySelector("#count-down")
+
+/**
+ * 
+ * @param {string} url 
+ */
+function getURLWithRng(url)
+{
+    const target = new URL(url)
+    target.searchParams.set("reload_rng" + Math.random().toString().substr(2), Math.random().toString().substr(2))
+    console.log("rng url", target.toString())
+    return target
+}
 
 function update()
 {
